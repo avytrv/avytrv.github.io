@@ -1,11 +1,11 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { BloomPass } from "three/addons/postprocessing/BloomPass.js";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { FilmPass } from "three/addons/postprocessing/FilmPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { RenderPixelatedPass } from "three/addons/postprocessing/RenderPixelatedPass.js";
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 import { VignetteShader } from "three/addons/shaders/VignetteShader.js";
 
@@ -39,15 +39,15 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // ORBIT CONTROLS
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.minDistance = 5;
-controls.maxDistance = 20;
-controls.minPolarAngle = 0.5;
-controls.maxPolarAngle = 1.5;
-controls.autoRotate = false;
-controls.target = new THREE.Vector3(0, 1, 0);
-controls.update();
+// const controls = new OrbitControls(camera, renderer.domElement);
+// controls.enableDamping = true;
+// controls.minDistance = 5;
+// controls.maxDistance = 20;
+// controls.minPolarAngle = 0.5;
+// controls.maxPolarAngle = 1.5;
+// controls.autoRotate = false;
+// controls.target = new THREE.Vector3(0, 1, 0);
+// controls.update();
 
 // GROUND
 const groundGeometry = new THREE.PlaneGeometry(32, 20, 32, 32);
@@ -83,12 +83,14 @@ const vignetteShader = VignetteShader;
 const composer = new EffectComposer(renderer);
 const renderPass = new RenderPass(scene, camera);
 const bloomPass = new BloomPass(0.8);
+const renderPixelatedPass = new RenderPixelatedPass(3, scene, camera);
 const filmPass = new FilmPass(1);
 const vignetteEffect = new ShaderPass(vignetteShader);
 const outputPass = new OutputPass();
 
 composer.addPass(renderPass);
 composer.addPass(bloomPass);
+composer.addPass(renderPixelatedPass);
 composer.addPass(filmPass);
 composer.addPass(vignetteEffect);
 composer.addPass(outputPass);
@@ -108,7 +110,7 @@ function animate(now) {
   now *= 0.001;
   const deltaTime = now - then;
   then = now;
-  controls.update();
+  //controls.update();
   renderer.clear();
   composer.render(deltaTime);
 }
